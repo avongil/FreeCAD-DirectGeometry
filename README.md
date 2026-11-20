@@ -6,6 +6,10 @@
 
 <p align="center">
   <b>Mastercam X style drawing in 3D space, for FreeCAD.</b>
+  <br>
+  <a href="https://avongil.github.io/FreeCAD-DirectGeometry/"><b>Manual</b></a> ·
+  <a href="#install">Install</a> ·
+  <a href="#commands">Commands</a>
   <br><br>
   <img alt="Proof of concept" src="https://img.shields.io/badge/status-proof%20of%20concept-e0a020">
   <img alt="License LGPL-2.1-or-later" src="https://img.shields.io/badge/license-LGPL--2.1--or--later-5a6375">
