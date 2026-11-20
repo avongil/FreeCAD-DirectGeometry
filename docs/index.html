@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Direct Geometry Manual</title>
+<link rel="icon" href="https://raw.githubusercontent.com/avongil/FreeCAD-DirectGeometry/main/icons/DirectGeo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Same technical-manual look as the FeatureNamer manual: contents rail + column, CSS mockups of the real bars */
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --ink:#1b2130; --muted:#5a6375; --rule:#d9dde5;
+  --accent:#2f5bd3; --accent-soft:#e6ecfb; --live:#5fb4ff; --done:#2fa84f; --lock:#d33a2f;
+  --code-bg:#eef0f4; --viewport-a:#2e3263; --viewport-b:#8a8fb5; --warn:#a15c00; --warn-soft:#fff3df;
+  --gu:#e04a3a; --gv:#3fae4a; --gw:#3a6ee0;
+  --f-display:"Archivo", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151d; --surface:#1a1f2a; --ink:#e6e9f0; --muted:#9aa3b5; --rule:#2c3343;
+  --accent:#86a5ff; --accent-soft:#1e2a4a; --lock:#ff6b5e;
+  --code-bg:#20263299; --viewport-a:#22254a; --viewport-b:#5d6290; --warn:#f0b35c; --warn-soft:#2e2412; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151d; --surface:#1a1f2a; --ink:#e6e9f0; --muted:#9aa3b5; --rule:#2c3343;
+  --accent:#86a5ff; --accent-soft:#1e2a4a; --lock:#ff6b5e;
+  --code-bg:#20263299; --viewport-a:#22254a; --viewport-b:#5d6290; --warn:#f0b35c; --warn-soft:#2e2412; color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:56px;padding-block:48px 96px}
+@media (max-width:860px){.wrap{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:28px 64px}.toc{display:none}}
+.toc{position:sticky;top:calc(env(safe-area-inset-top, 0px) + 24px);align-self:start;font-size:14px}
+.toc p{font-family:var(--f-display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--muted);margin:0 0 10px}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.toc a{color:var(--muted);text-decoration:none}
+.toc a:hover,.toc a:focus-visible{color:var(--accent)}
+main{min-width:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(34px,5vw,52px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:28px;font-weight:800;margin-top:72px;padding-top:20px;border-top:2px solid var(--ink)}
+h3{font-size:19px;font-weight:700;margin-top:32px}
+p,li{max-width:68ch}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--f-mono);font-size:13px;color:var(--muted);letter-spacing:.02em}
+.lede{font-size:20px;color:var(--muted);margin:16px 0 0}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;font-size:14px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+code,kbd,pre{font-family:var(--f-mono);font-size:.86em}
+code{background:var(--code-bg);padding:1px 5px;border-radius:3px}
+kbd{border:1px solid var(--rule);border-bottom-width:2px;border-radius:4px;padding:0 6px;background:var(--surface)}
+pre{background:var(--code-bg);padding:16px 18px;border-radius:6px;overflow-x:auto;line-height:1.5;margin:16px 0}
+pre code{background:none;padding:0}
+.c{color:var(--muted)}
+
+.note{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;margin:24px 0;border-radius:0 4px 4px 0;max-width:68ch}
+.note strong{color:var(--warn)}
+
+/* bar mockups */
+.figure{margin:28px 0;display:grid;gap:10px}
+.figure figcaption{font-size:14px;color:var(--muted)}
+.bars{border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--surface);font-size:13px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:7px 10px;border-bottom:1px solid var(--rule)}
+.bar .lbl{font-family:var(--f-display);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);min-width:78px}
+.bar .f{display:inline-flex;align-items:center;gap:4px}
+.bar .f b{font-weight:600}
+.bar .box{font-family:var(--f-mono);border:1px solid var(--rule);border-radius:3px;padding:1px 7px;background:var(--bg);min-width:62px}
+.bar .box.lock{border-color:var(--lock);color:var(--lock)}
+.bar .btn{border:1px solid var(--rule);border-radius:4px;padding:1px 9px;background:var(--bg)}
+.bar .btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.viewport{background:linear-gradient(180deg,var(--viewport-a),var(--viewport-b));min-height:220px;position:relative}
+.viewport svg{position:absolute;inset:0;width:100%;height:100%}
+
+.steps{list-style:none;padding:0;margin:20px 0;display:grid;gap:14px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;max-width:none}
+.steps li::before{content:counter(s);font-family:var(--f-display);font-weight:800;width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-size:14px}
+
+table{border-collapse:collapse;width:100%;font-size:15px}
+.tbl{overflow-x:auto;margin:16px 0}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--f-display);font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
+td:first-child{white-space:nowrap;font-weight:600}
+
+.swatch{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+.limits{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:20px 0}
+.limits div{border:1px solid var(--rule);border-radius:6px;padding:14px 16px;background:var(--surface)}
+.limits h4{margin:0 0 6px;font-family:var(--f-display);font-size:16px}
+.limits p{margin:0;font-size:15px;color:var(--muted)}
+.gn{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:24px;align-items:center;margin:24px 0}
+@media (max-width:640px){.gn{grid-template-columns:minmax(0,1fr)}}
+.gn svg{width:100%;height:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+footer{margin-top:72px;font-size:14px;color:var(--muted);border-top:1px solid var(--rule);padding-top:16px}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Contents">
+    <p>Contents</p>
+    <ol>
+      <li><a href="#why">Why</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#screen">The screen</a></li>
+      <li><a href="#cplane">Cplanes and 2D/3D</a></li>
+      <li><a href="#create">Create</a></li>
+      <li><a href="#edit">Edit</a></li>
+      <li><a href="#xform">Dynamic Transform</a></li>
+      <li><a href="#props">Entity properties</a></li>
+      <li><a href="#sketch">Make Sketch</a></li>
+      <li><a href="#limits">Not in this version</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="eyebrow">FreeCAD workbench · direct 2D geometry in 3D space</div>
+    <h1>Direct Geometry</h1>
+    <p class="lede">Mastercam X style drawing in 3D space, for FreeCAD. Draw lines, arcs, circles, rectangles and polygons straight into the model, on any plane at any depth, with no sketch and no history.</p>
+    <div class="meta">
+      <span><b>Tested on</b> FreeCAD 26.3.0dev (weekly 2026-09-16)</span>
+      <span><b>Version</b> 0.1.0 · proof of concept</span>
+      <span><b>Source</b> <a href="https://github.com/avongil/FreeCAD-DirectGeometry">github.com/avongil/FreeCAD-DirectGeometry</a></span>
+    </div>
+
+    <div class="note"><strong>Proof of concept.</strong> It's a bit rough around the edges, but it works. Bug reports are welcome on the <a href="https://github.com/avongil/FreeCAD-DirectGeometry/issues">issues page</a>.</div>
+
+    <h2 id="why">Why</h2>
+    <p>My favorite direct CAD interface is the Mastercam X style interface. It was gone after X9, but it's still loved by many! You pick a construction plane and a depth and just draw. AutoCursor snaps to ends, midpoints, centres and intersections, and a ribbon bar lets you type or lock any value while the entity follows the mouse.</p>
+    <p>FreeCAD makes you open a sketch first, and sketches live on one plane. Direct Geometry brings that ease of drawing in 3D space to FreeCAD. Every entity is a plain FreeCAD Part object, so files open anywhere. When you want a solid, <b>Make Sketch</b> turns the wireframe into a regular Sketcher sketch for Pad, Pocket or Extrude.</p>
+
+    <h2 id="install">Install</h2>
+    <p>Direct Geometry is a plain Python workbench. You don't need to compile anything.</p>
+    <ol class="steps">
+      <li><div>Download the repository from <a href="https://github.com/avongil/FreeCAD-DirectGeometry">github.com/avongil/FreeCAD-DirectGeometry</a> (<b>Code ▸ Download ZIP</b>) and unzip it, or <code>git clone</code> it.</div></li>
+      <li><div>Move the folder that holds <code>InitGui.py</code> into the <code>Mod</code> folder of your FreeCAD user folder. The folder name doesn't matter, but <code>DirectGeo</code> is tidy.</div></li>
+      <li><div>Restart FreeCAD and choose <b>Direct Geometry</b> in the workbench selector. To remove it, delete the folder.</div></li>
+    </ol>
+<pre><code>&lt;your FreeCAD user folder&gt;/
+└── Mod/
+    └── DirectGeo/
+        ├── InitGui.py      <span class="c"># registers the workbench</span>
+        ├── Init.py         <span class="c"># keeps geometry properties editable outside the workbench</span>
+        ├── directgeo/      <span class="c"># tools, snapping, Cplanes, gnomon, ribbon bars</span>
+        └── icons/</code></pre>
+    <p><b>Where is my FreeCAD user folder?</b> Open <i>View ▸ Panels ▸ Python console</i> and type <code>App.getUserAppDataDir()</code>. On Windows it is usually <code>%APPDATA%\FreeCAD\vXX-Y</code>, on Linux <code>~/.local/share/FreeCAD/vXX-Y</code>. If there is no <code>Mod</code> folder yet, create it. Putting the workbench folder directly in the user folder doesn't work.</p>
+
+    <h2 id="screen">The screen</h2>
+    <p>The workbench adds three bars across the top of the 3D view. They appear when you switch to Direct Geometry and hide when you leave it.</p>
+    <figure class="figure">
+      <div class="bars" role="img" aria-label="Mockup of the AutoCursor, ribbon and Cplane bars above the 3D view">
+        <div class="bar"><span class="lbl">AutoCursor</span>
+          <span class="f"><b>X</b><span class="box">12.500</span></span>
+          <span class="f"><b>Y</b><span class="box lock">40.000</span></span>
+          <span class="f"><b>Z</b><span class="box">0.000</span></span>
+          <span class="f"><b>Fast point</b><span class="box">2,2,3</span></span>
+          <span class="btn">AutoCursor ▾</span><span class="btn">Only ▾</span></div>
+        <div class="bar"><span class="lbl">Ribbon</span>
+          <span class="btn">Length</span><span class="box">50.000</span>
+          <span class="btn">Angle</span><span class="box lock">30.000</span>
+          <span class="btn">Horiz</span><span class="btn">Vert</span><span class="btn">Tangent</span>
+          <span class="btn">+</span><span class="btn">✔</span></div>
+        <div class="bar"><span class="lbl">Cplane</span>
+          <span class="btn on">MODE: 2D</span>
+          <span class="btn">Top</span><span class="btn">Front</span><span class="btn">Right</span><span class="btn">Gview</span><span class="btn">Gnomon</span>
+          <span class="f"><b>Z</b><span class="box">10.000</span></span>
+          <span class="btn">Axes (F9)</span></div>
+        <div class="viewport">
+          <svg viewBox="0 0 600 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g fill="none" stroke-width="2.5">
+              <path d="M140 160 L300 160 L300 80" stroke="var(--done)"/>
+              <circle cx="300" cy="80" r="0" stroke="var(--done)"/>
+              <path d="M300 80 L430 5" stroke="var(--live)" stroke-dasharray="0"/>
+              <path d="M140 160 A70 70 0 0 1 140 20" stroke="var(--done)"/>
+            </g>
+            <g fill="#fff"><rect x="295" y="75" width="10" height="10" fill="none" stroke="#ffd447" stroke-width="2"/></g>
+            <text x="312" y="74" font-family="JetBrains Mono, monospace" font-size="12" fill="#ffd447">End</text>
+          </svg>
+        </div>
+      </div>
+      <figcaption>Committed geometry is <span class="swatch" style="background:var(--done)"></span>green, the entity being drawn is <span class="swatch" style="background:var(--live)"></span>light blue, and locked values are <span class="swatch" style="background:var(--lock)"></span>red. The yellow square is the AutoCursor snap marker.</figcaption>
+    </figure>
+
+    <h3>AutoCursor bar</h3>
+    <ul>
+      <li>Shows the live X/Y/Z of the cursor. Click <b>X</b>, <b>Y</b> or <b>Z</b> to lock that value. Type values and press <kbd>Enter</kbd> to place a point.</li>
+      <li><b>Fast point</b> takes <code>2,2,3</code> + <kbd>Enter</kbd> for global X2 Y2 Z3. <code>2,2</code> is a point on the current Cplane.</li>
+      <li>Expressions and units work everywhere: <code>1in</code>, <code>25.4/2</code>. Units follow the FreeCAD document (mm by default).</li>
+      <li><b>AutoCursor</b> picks the snap types: Origin, Point, End, Mid, Center, Quad, Intersection, Tangent, Perpendicular, Horiz/Vert and Nearest. <b>Only</b> limits snapping to one type for the next pick.</li>
+    </ul>
+
+    <h3>Ribbon bar</h3>
+    <ul>
+      <li>Changes with each command. Typing in a field and pressing <kbd>Enter</kbd> edits the live (light blue) entity.</li>
+      <li>The label buttons lock a value, so the entity keeps it while you move the mouse.</li>
+      <li><b>+</b> keeps the entity and continues the command. <b>✔</b> or <kbd>Esc</kbd> keeps it and ends the command.</li>
+    </ul>
+
+    <h2 id="cplane">Cplanes and 2D/3D mode</h2>
+    <p>The Cplane bar sets where geometry is drawn. Free clicks land on the Cplane at the Z depth, and circles, arcs, rectangles and polygons are drawn parallel to it.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Cplane</th><th>Plane</th></tr></thead>
+      <tbody>
+        <tr><td>Top / Bottom</td><td>XY plane, looking down / up</td></tr>
+        <tr><td>Front / Back</td><td>XZ plane</td></tr>
+        <tr><td>Right / Left</td><td>YZ plane</td></tr>
+        <tr><td>Gview</td><td>Facing the screen, whatever the current view direction</td></tr>
+        <tr><td>Gnomon</td><td>The plane of the Dynamic Transform gnomon, so you can draw on any 3D plane</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><b>MODE: 2D.</b> Every clicked or snapped point is projected onto the Cplane at the Z depth. Snapping to existing geometry draws on top of it, at your depth.</li>
+      <li><b>MODE: 3D.</b> Points stay exactly where they snap, so you can join geometry at different depths.</li>
+      <li>Typed coordinates are always used as typed. Dynamic Transform, Trim and Fillet ignore the mode.</li>
+      <li><b>Axes (<kbd>F9</kbd>)</b> shows the system axes.</li>
+    </ul>
+
+    <h2 id="create">Create</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Point</td><td>A single point.</td></tr>
+        <tr><td>Line Endpoints</td><td>Single or multi (chained) lines. Lock length or angle, horizontal/vertical, tangent to two circles. Tangent and perpendicular snaps from the first point.</td></tr>
+        <tr><td>Line Parallel</td><td>Pick a line, then the side. The distance follows the mouse or can be locked in the ribbon.</td></tr>
+        <tr><td>Circle Center Point</td><td>Centre plus radius or diameter.</td></tr>
+        <tr><td>Arc Polar</td><td>Centre, radius, start and end angle.</td></tr>
+        <tr><td>Arc Endpoints</td><td>Two endpoints plus radius.</td></tr>
+        <tr><td>Arc 3 Points</td><td>Through three points.</td></tr>
+        <tr><td>Rectangle</td><td>Two points, or lock width and height and place it by a base point. Centre anchor, corner radius, rotation.</td></tr>
+        <tr><td>Polygon</td><td>Radius to corner or to flats, or Flat to Flat for even side counts (dimmed for odd counts such as a triangle).</td></tr>
+        <tr><td>Fillet</td><td>Between lines and arcs, with or without trimming.</td></tr>
+        <tr><td>Chamfer</td><td>Distance, 2 Distances, Distance/Angle or Width.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="edit">Edit</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Trim/Break/Extend</td><td>Trim 1, 2 or 3 entities, Divide, or To Point. Picks work like Mastercam: click the side you want to keep.</td></tr>
+        <tr><td>Close Arc</td><td>Turns an arc into a full circle.</td></tr>
+        <tr><td>Delete Duplicates</td><td>Removes entities that duplicate another one, in the selection or the whole document.</td></tr>
+        <tr><td>Delete</td><td>FreeCAD's normal <kbd>Del</kbd> key.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="xform">Dynamic Transform</h2>
+    <p>The gnomon from Mastercam X4. Move, copy and rotate geometry by dragging handles, with AutoCursor snapping while you drag.</p>
+    <div class="gn">
+      <svg viewBox="0 0 260 220" role="img" aria-label="Diagram of the gnomon with U, V and W arrows, plane squares, rotation arcs and centre ball">
+        <g stroke-width="3" fill="none">
+          <path d="M110 130 L215 130" stroke="var(--gu)"/><path d="M215 130 l-12 -6 v12 z" fill="var(--gu)" stroke="var(--gu)"/>
+          <path d="M110 130 L110 25" stroke="var(--gv)"/><path d="M110 25 l-6 12 h12 z" fill="var(--gv)" stroke="var(--gv)"/>
+          <path d="M110 130 L45 195" stroke="var(--gw)"/><path d="M45 195 l5 -13 l8 8 z" fill="var(--gw)" stroke="var(--gw)"/>
+          <rect x="135" y="95" width="18" height="18" stroke="var(--gw)"/>
+          <path d="M175 130 A65 65 0 0 0 110 65" stroke="var(--gw)" stroke-dasharray="5 4"/>
+        </g>
+        <circle cx="110" cy="130" r="9" fill="var(--ink)"/>
+        <g font-family="JetBrains Mono, monospace" font-size="13" fill="var(--muted)">
+          <text x="222" y="134">U</text><text x="104" y="17">V</text><text x="28" y="208">W</text>
+          <text x="158" y="92">plane</text><text x="180" y="72">rotate</text><text x="126" y="156">centre</text>
+        </g>
+      </svg>
+      <div>
+        <ol class="steps">
+          <li><div>Select entities, or start the command and select, then press <kbd>Enter</kbd>.</div></li>
+          <li><div>Pick the gnomon origin, or press <kbd>Enter</kbd> for the centre of the selection.</div></li>
+          <li><div>Click a handle, move the mouse, click again.</div></li>
+        </ol>
+      </div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Handle</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Arrow</td><td>Move along U, V or W.</td></tr>
+        <tr><td>Square</td><td>Move in that plane.</td></tr>
+        <tr><td>Arc</td><td>Rotate about the axis.</td></tr>
+        <tr><td>Centre ball</td><td>Move to a snapped point.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><b>dU / dV / dW</b> and <b>Angle</b> in the ribbon edit the last move exactly.</li>
+      <li><b>Move</b> or <b>Copy</b>, with a number of copies. <b>Angle Step</b> and <b>Dist Step</b> set increments.</li>
+      <li><b>Gnomon Only</b> repositions or re-orients the gnomon without moving geometry.</li>
+      <li><b>Cplane = Gnomon</b> makes the gnomon's plane the drawing plane. That's how you draw 2D geometry on any plane in 3D.</li>
+      <li>Each entity keeps its own colour and width, and copies take theirs from the original.</li>
+    </ul>
+
+    <h2 id="props">Entity properties</h2>
+    <p>Click an entity with no command running and FreeCAD's property view shows it. The <b>Data</b> tab has a <b>Geometry</b> group you can edit directly. Edits reshape the entity at once and can be undone.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Entity</th><th>Editable properties</th></tr></thead>
+      <tbody>
+        <tr><td>Point</td><td>Position (X, Y, Z)</td></tr>
+        <tr><td>Line</td><td>Start Point, End Point, Length, Angle (XY plane)</td></tr>
+        <tr><td>Circle</td><td>Center, Radius, Diameter, Normal</td></tr>
+        <tr><td>Arc</td><td>Center, Radius, Diameter, Start Angle, End Angle, Normal (Start/End Point shown read only)</td></tr>
+      </tbody>
+    </table></div>
+    <p>The <b>View</b> tab holds Line Color, Line Width, Point Color, Point Size and Draw Style.</p>
+
+    <h2 id="sketch">Make Sketch</h2>
+    <p>On the <b>DG Output</b> toolbar and at the end of the Create menu. Select coplanar entities and click it. You get a Sketcher sketch placed on their plane (any Cplane, any depth) with coincident, horizontal and vertical constraints added, ready for Part Extrude or PartDesign Pad/Pocket. The original entities are kept.</p>
+
+    <h2 id="limits">Not in this version (yet)</h2>
+    <div class="limits">
+      <div><h4>More arcs</h4><p>Arc tangent variants aren't there yet.</p></div>
+      <div><h4>Text and curves</h4><p>No letters/fonts and no ellipse.</p></div>
+      <div><h4>More breaks</h4><p>Break many and break at intersection are missing.</p></div>
+      <div><h4>Drafting</h4><p>No drafting dimensions and no 3D solids. Use Make Sketch and PartDesign for solids.</p></div>
+    </div>
+
+    <footer>Direct Geometry · proof-of-concept workbench · LGPL-2.1-or-later · <a href="https://github.com/avongil/FreeCAD-DirectGeometry">source on GitHub</a></footer>
+  </main>
+</div>
+</body>
+</html>
